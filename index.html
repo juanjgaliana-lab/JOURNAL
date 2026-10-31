@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Journal de Trading</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--l:#E5E7EB;--t:#111827;--m:#6B7280;--a:#0F766E;--g:#15803D;--r:#B91C1C;--c:#F9FAFB;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;color:var(--t);background:#fff}
+nav{display:flex;gap:4px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--l);position:sticky;top:0;background:#fff;z-index:5}
+nav button{border:0;background:none;padding:8px 12px;border-radius:8px;color:var(--m);font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer}
+nav button.on{background:var(--a);color:#fff}
+main{max-width:980px;margin:0 auto;padding:14px}
+.card{background:var(--c);border:1px solid var(--l);border-radius:12px;padding:14px;margin-bottom:12px}
+.kg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:700px){.kg{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:repeat(4,1fr)!important}}
+.k{background:var(--c);border:1px solid var(--l);border-radius:12px;padding:12px}.k small{display:block;color:var(--m);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.k b{font-size:20px}
+.g{color:var(--g)}.r{color:var(--r)}.y{color:#B45309}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;color:var(--m);display:block}
+input,select,textarea{width:100%;margin-top:4px;padding:9px;border:1px solid var(--l);border-radius:8px;font:inherit;font-size:14px;background:#fff;color:var(--t)}
+button{padding:10px 14px;border:0;border-radius:8px;background:var(--a);color:#fff;font-weight:700;cursor:pointer;font-size:14px}
+button.ghost{background:#fff;color:var(--m);border:1px solid var(--l)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.seg button{background:#fff;color:var(--m);border:1px solid var(--l);padding:12px}
+.seg button.on.g{background:#DCFCE7;color:var(--g);border-color:var(--g)}.seg button.on.r{background:#FEE2E2;color:var(--r);border-color:var(--r)}
+.bar{display:flex;gap:8px;margin-bottom:12px}.row{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin:6px 0}
+.tag{padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700;background:var(--l)}.tag.g{background:#DCFCE7}.tag.r{background:#FEE2E2}.tag.y{background:#FEF3C7}
+.bar2{height:6px;background:var(--l);border-radius:9px;margin:8px 0;overflow:hidden}.bar2 i{display:block;height:100%;background:var(--a)}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--m);font-weight:600}td,th{padding:7px 6px;border-bottom:1px solid var(--l)}
+.cal{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}.cal div{min-height:54px;border:1px solid var(--l);border-radius:8px;padding:4px;font-size:11px;color:var(--m)}
+.cal div b{display:block;font-size:12px;margin-top:4px}.cal .w{background:#DCFCE7}.cal .l{background:#FEE2E2}.cal .h{border:0;min-height:0;text-align:center;font-weight:700}
+h3{margin:4px 0 12px}
+</style></head><body><nav id="nav"></nav><main id="app"></main>
+<script>
+const PV={NQ:20,MNQ:2,ES:50,MES:5,YM:5,MYM:.5,RTY:50,M2K:5,GC:100,MGC:10,CL:1000,MCL:100};
+const L={ses:['Asia','Londres','Pre-market NY','Apertura NY (9:30-10:10)','NY mañana','NY tarde'],bias:['A favor del bias','En contra del bias','Neutral'],q:['A+','A','B','C'],
+emo:['Tranquilo','Confiado','Ansioso','FOMO','Miedo','Euforia','Frustrado','Venganza','Aburrido','Cansado'],
+err:['Ninguno','FOMO','Entrada temprana','Sin confirmación','Movió el SL','Sobreoperó','Revenge trade','Salida temprana','Riesgo excesivo','Fuera de horario','Ignoró el bias'],
+per:['Todo','Esta semana','Este mes','Últimos 30 días','Este año'],dd:['Trailing intradía','Trailing EOD','Estático'],st:['Activa','Aprobada','Quemada','Retirada','Cerrada']};
+const PB0=[
+['Apertura NY · N1','NY 9:30-10:10','Entrada en la apertura de NY a favor del daily bias.',['Daily bias definido','DOL identificado','FVG HTF de apoyo','Confirmación con IFVG','SL definido antes de entrar']],
+['Continuación NY · N2','NY mañana','Continuación tras la apertura a favor del bias.',['Daily bias a favor','DOL pendiente','FVG HTF respetado','Confirmación con IFVG','SL definido']],
+['Retroceso NY · N3','NY mañana','Retroceso a IFVG o niveles de retroceso y continuación.',['Daily bias a favor','Retroceso a nivel/IFVG claro','Confirmación','SL definido']],
+['Primer IFVG de la sesión','9:30-10:10 NY','Primer IFVG tras la apertura del Nasdaq a favor del bias.',['Bias 1D/4H a favor','Primer IFVG tras la apertura','SMT NQ vs ES','POI','SL sobre/bajo la vela del IFVG','RR mín 1:1 (ideal 1:2)','Máx. 2 operaciones al día']],
+['Judas Swing + retesteo IFVG','NY / cualquier sesión','Vela que saca liquidez y entrada en el retesteo de un IFVG claro.',['Liquidez tomada con mecha','FVGs de la pierna previa invalidados','IFVG claro (no pequeño)','Retesteo respetado con 2 velas de confirmación','SL tras la mecha de la vela que respetó el IFVG','Parciales 1:1.5 / BE / 1:3']],
+['W / M 5 min','5 min','Patrón W/M a favor de la tendencia en 5 minutos.',['Tendencia 5m (swings + EMA 20/50)','Alto/bajo que falla','Vela de confirmación con cuerpo fuerte','SL en el bajo/alto protegido','TP 1:2']],
+['Discrecional / Otro','','Trade fuera de playbook.',['Anotar el motivo en notas']]
+].map(p=>({name:p[0],win:p[1],desc:p[2],chk:p[3].join('\n')}));
+let S;try{S=JSON.parse(localStorage.getItem('jr1')||'null')}catch(e){}
+S=S||{trades:[],accounts:[{name:'Apex 50K - 1',firm:'Apex',ini:50000,dd:2500,type:'Trailing intradía',lim:0,obj:3000,status:'Activa'}],playbooks:PB0,comm:0,f:{acc:'Todas',per:'Todo'}};
+const save=()=>{try{localStorage.setItem('jr1',JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const m$=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pc=x=>x==null?'—':(x*100).toFixed(1)+'%',pfm=p=>p==null?'—':typeof p=='number'?p.toFixed(2):p,cl=n=>n>0?'g':n<0?'r':'';
+const opts=(a,s)=>a.map(x=>`<option${x==s?' selected':''}>${esc(x)}</option>`).join('');
+function calc(t){const pv=PV[t.sym]||0,g=(t.exit-t.entry)*(t.dir=='Long'?1:-1)*t.cts*pv,net=g-(t.comm==null?t.cts*S.comm:t.comm),risk=t.sl?Math.abs(t.entry-t.sl)*t.cts*pv:0,r=risk?net/risk:null;
+return{...t,net,r,res:(g===0||(r!=null&&Math.abs(r)<=.1))?'BE':net>0?'Win':'Loss'}}
+function start(){const d=new Date(),p=S.f.per;if(p=='Esta semana'){d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)}if(p=='Este mes')return iso(new Date(d.getFullYear(),d.getMonth(),1));
+if(p=='Últimos 30 días'){d.setDate(d.getDate()-30);return iso(d)}if(p=='Este año')return d.getFullYear()+'-01-01';return'0000'}
+const srt=(a,b)=>(a.date+a.time).localeCompare(b.date+b.time);
+const TA=()=>S.trades.map(calc).filter(t=>S.f.acc=='Todas'||t.acc==S.f.acc).sort(srt),T=()=>TA().filter(t=>t.date>=start());
+function stats(a){const w=a.filter(t=>t.res=='Win'),l=a.filter(t=>t.res=='Loss'),sum=x=>x.reduce((s,t)=>s+t.net,0),gp=sum(w),gl=Math.abs(sum(l)),rs=a.filter(t=>t.r!=null),y=a.filter(t=>t.rules=='Sí').length,n=a.filter(t=>t.rules=='No').length;
+let c=0,pk=0,dd=0;a.forEach(t=>{c+=t.net;pk=Math.max(pk,c);dd=Math.max(dd,pk-c)});
+return{n:a.length,net:sum(a),wr:a.length?w.length/a.length:null,pf:gl?gp/gl:(gp?'∞':null),exp:a.length?sum(a)/a.length:0,r:rs.length?rs.reduce((s,t)=>s+t.r,0)/rs.length:null,aw:w.length?gp/w.length:0,al:l.length?-gl/l.length:0,
+best:a.length?Math.max(...a.map(t=>t.net)):0,worst:a.length?Math.min(...a.map(t=>t.net)):0,dd:-dd,rules:y+n?y/(y+n):null}}
+function accSt(ac){const ts=S.trades.map(calc).filter(t=>t.acc==ac.name).sort(srt),td=iso(new Date());let b=ac.ini,pk=b,eod=b,cur=null,today=0;
+ts.forEach(t=>{if(cur&&t.date!=cur)eod=Math.max(eod,b);cur=t.date;b+=t.net;pk=Math.max(pk,b);if(t.date==td)today+=t.net});
+const ref=ac.type=='Trailing EOD'?eod:pk,thr=ac.dd?(ac.type=='Estático'?ac.ini-ac.dd:Math.min(ref-ac.dd,ac.ini)):null,cush=thr==null?null:b-thr,pct=thr==null?0:Math.max(0,Math.min(1,1-cush/ac.dd));
+let al=['OK','g'];if(ac.status!='Activa')al=[ac.status,''];else if(thr!=null&&b<=thr)al=['DD alcanzado','r'];else if(ac.lim&&today<=-ac.lim)al=['Límite diario','r'];
+else if(ac.obj&&b-ac.ini>=ac.obj)al=['Objetivo alcanzado','g'];else if(pct>=.9)al=['Peligro','r'];else if(pct>=.7)al=['Precaución','y'];return{b,thr,cush,pct,today,al}}
+const accCards=()=>S.accounts.map(a=>{const x=accSt(a);return`<div class="card"><div class="row"><b>${esc(a.name)}</b><span class="tag ${x.al[1]}">${x.al[0]}</span></div><small>${esc(a.firm)} · ${esc(a.type)}</small><div class="bar2"><i style="width:${x.pct*100}%"></i></div><div class="row"><span>Balance ${m$(x.b)}</span><span>Colchón ${x.cush==null?'—':m$(x.cush)}</span><span>DD usado ${Math.round(x.pct*100)}%</span></div></div>`}).join('');
+const fb=()=>`<div class="bar"><select onchange="S.f.acc=this.value;save();render()">${opts(['Todas',...S.accounts.map(a=>a.name)],S.f.acc)}</select><select onchange="S.f.per=this.value;save();render()">${opts(L.per,S.f.per)}</select></div>`;
+const k=(l,v,c)=>`<div class="k"><small>${l}</small><b class="${c||''}">${v}</b></div>`;
+const tabs=['Dashboard','Trades','Cuentas','Calendario','Estadísticas','Playbooks','Ajustes'];let tab='Dashboard',cm=new Date(),ch=[],D='Long',dim='pb',V={},A={};
+function render(){$('#nav').innerHTML=tabs.map(t=>`<button class="${t==tab?'on':''}" onclick="tab='${t}';render()">${t}</button>`).join('');ch.forEach(c=>c.destroy());ch=[];$('#app').innerHTML=V[tab]();if(A[tab])A[tab]()}
+V.Dashboard=()=>{const s=stats(T());return fb()+`<div class="kg">${k('P&L neto',m$(s.net),cl(s.net))}${k('Win rate',pc(s.wr))}${k('Profit factor',pfm(s.pf))}${k('Expectativa',m$(s.exp),cl(s.exp))}${k('Trades',s.n)}${k('R promedio',s.r==null?'—':s.r.toFixed(2)+'R')}${k('Ganancia media',m$(s.aw),'g')}${k('Pérdida media',m$(s.al),'r')}${k('Mejor trade',m$(s.best),cl(s.best))}${k('Peor trade',m$(s.worst),cl(s.worst))}${k('Max drawdown',m$(s.dd),cl(s.dd))}${k('Reglas cumplidas',pc(s.rules))}</div><div class="card"><canvas id="c1" height="130"></canvas></div><div class="card"><canvas id="c2" height="130"></canvas></div><h3>Cuentas</h3>${accCards()}`};
+A.Dashboard=()=>{if(!window.Chart)return;const a=T();let c=0;const eq=a.map(t=>c+=t.net),o=x=>({plugins:{legend:{display:false},title:{display:true,text:x}}});
+ch.push(new Chart($('#c1'),{type:'line',data:{labels:a.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#0F766E',backgroundColor:'rgba(15,118,110,.08)',fill:true,tension:.2,pointRadius:0}]},options:o('Curva de equity')}));
+const wd=['Lun','Mar','Mié','Jue','Vie'],v=wd.map(()=>0);a.forEach(t=>{const d=(new Date(t.date+'T00:00').getDay()+6)%7;if(d<5)v[d]+=t.net});
+ch.push(new Chart($('#c2'),{type:'bar',data:{labels:wd,datasets:[{data:v,backgroundColor:v.map(x=>x>=0?'#15803D':'#B91C1C')}]},options:o('P&L por día de la semana')}))};
+const ff=(id,l,h)=>`<label>${l}${h}</label>`;
+V.Trades=()=>`<div class="card"><h3>Nuevo trade</h3><div class="g2"><label>Fecha<input type=date id=f-date value="${iso(new Date())}"></label><label>Hora<input type=time id=f-time value="${new Date().toTimeString().slice(0,5)}"></label><label>Cuenta<select id=f-acc>${opts(S.accounts.map(a=>a.name))}</select></label><label>Activo<select id=f-sym onchange=pv()>${opts(Object.keys(PV))}</select></label></div>
+<div class="seg"><button id=bL class="${D=='Long'?'on g':''}" onclick="setD('Long')">Long</button><button id=bS class="${D=='Short'?'on r':''}" onclick="setD('Short')">Short</button></div>
+<div class="g2"><label>Contratos<input type=number id=f-cts value=1 oninput=pv()></label><label>Comisión $ (vacío = auto)<input type=number id=f-comm step=.01 oninput=pv()></label><label>Entrada<input type=number id=f-en step=.25 oninput=pv()></label><label>Salida<input type=number id=f-ex step=.25 oninput=pv()></label><label>Stop loss<input type=number id=f-sl step=.25 oninput=pv()></label><label>Take profit<input type=number id=f-tp step=.25></label></div>
+<div class="row"><span>P&L neto estimado: <b id=pn>—</b></span><span>R: <b id=pr>—</b></span></div>
+<div class="g2"><label>Playbook<select id=f-pb>${opts(['',...S.playbooks.map(p=>p.name)])}</select></label><label>Sesión<select id=f-ses>${opts(['',...L.ses])}</select></label><label>Sesgo<select id=f-bias>${opts(['',...L.bias])}</select></label><label>Calidad<select id=f-q>${opts(['',...L.q])}</select></label><label>Emoción<select id=f-emo>${opts(['',...L.emo])}</select></label><label>Error<select id=f-err>${opts(['',...L.err])}</select></label><label>¿Seguí reglas?<select id=f-rules>${opts(['','Sí','No'])}</select></label><label>Captura (URL)<input id=f-link></label></div>
+<label style="margin-top:10px">Notas<textarea id=f-notes rows=2></textarea></label><br><button onclick=add()>Guardar trade</button></div>
+<div class="card"><table><tr><th>Fecha</th><th>Cuenta</th><th>Activo</th><th>P&L</th><th>R</th><th></th></tr>${TA().slice().reverse().slice(0,60).map(t=>`<tr><td>${t.date}</td><td>${esc(t.acc)}</td><td>${t.sym} ${t.dir[0]}</td><td class="${cl(t.net)}">${m$(t.net)}</td><td>${t.r==null?'—':t.r.toFixed(2)}</td><td><button class=ghost onclick="del(${t.id})">✕</button></td></tr>`).join('')}</table></div>`;
+function setD(d){D=d;$('#bL').className=d=='Long'?'on g':'';$('#bS').className=d=='Short'?'on r':'';pv()}
+function pv(){const g=i=>$('#f-'+i).value,c=+g('cts'),en=+g('en'),ex=+g('ex'),pvv=PV[g('sym')]||0;if(!c||g('en')===''||g('ex')===''){$('#pn').textContent='—';$('#pr').textContent='—';return}
+const net=(ex-en)*(D=='Long'?1:-1)*c*pvv-(g('comm')===''?c*S.comm:+g('comm')),risk=g('sl')?Math.abs(en-+g('sl'))*c*pvv:0;$('#pn').textContent=m$(net);$('#pn').className=cl(net);$('#pr').textContent=risk?(net/risk).toFixed(2)+'R':'—'}
+function add(){const g=i=>$('#f-'+i).value,n=i=>g(i)===''?null:+g(i);const t={id:Date.now(),date:g('date'),time:g('time'),acc:g('acc'),sym:g('sym'),dir:D,cts:n('cts'),entry:n('en'),exit:n('ex'),sl:n('sl'),tp:n('tp'),comm:n('comm'),pb:g('pb'),ses:g('ses'),bias:g('bias'),q:g('q'),emo:g('emo'),err:g('err'),rules:g('rules'),link:g('link'),notes:g('notes')};
+if(!t.date||!t.acc||!t.cts||t.entry==null||t.exit==null)return alert('Completa fecha, cuenta, contratos, entrada y salida');S.trades.push(t);save();render()}
+function del(id){if(confirm('¿Eliminar este trade?')){S.trades=S.trades.filter(t=>t.id!=id);save();render()}}
+const fld=(i,key,l,num)=>`<label>${l}<input value="${esc(S.accounts[i][key])}" ${num?'type=number':''} onchange="ea(${i},'${key}',this.value,${!!num})"></label>`,fsel=(i,key,l,a)=>`<label>${l}<select onchange="ea(${i},'${key}',this.value)">${opts(a,S.accounts[i][key])}</select></label>`;
+function ea(i,key,v,num){if(key=='name'){const o=S.accounts[i].name;S.trades.forEach(t=>{if(t.acc==o)t.acc=v})}S.accounts[i][key]=num?(+v||0):v;save();render()}
+V.Cuentas=()=>accCards()+'<h3>Editar cuentas</h3>'+S.accounts.map((a,i)=>`<div class="card g2">${fld(i,'name','Nombre')}${fld(i,'firm','Prop firm')}${fld(i,'ini','Balance inicial $',1)}${fld(i,'dd','Drawdown máx $',1)}${fsel(i,'type','Tipo de DD',L.dd)}${fld(i,'lim','Límite diario $',1)}${fld(i,'obj','Objetivo $',1)}${fsel(i,'status','Estado',L.st)}<button class=ghost onclick="S.accounts.splice(${i},1);save();render()">Eliminar</button></div>`).join('')+`<button onclick="S.accounts.push({name:'Cuenta '+(S.accounts.length+1),firm:'',ini:50000,dd:2500,type:'Trailing intradía',lim:0,obj:3000,status:'Activa'});save();render()">+ Añadir cuenta</button><p><small>Trailing: se calcula sobre trades cerrados y se bloquea en el balance inicial. Ajusta según las reglas de tu firma.</small></p>`;
+V.Calendario=()=>{const y=cm.getFullYear(),mo=cm.getMonth(),off=(new Date(y,mo,1).getDay()+6)%7,dim2=new Date(y,mo+1,0).getDate(),by={};TA().forEach(t=>by[t.date]=(by[t.date]||0)+t.net);
+let h=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom','Semana'].map(x=>`<div class=h>${x}</div>`).join(''),wk=0,tot=0,gd=0,rd=0;
+for(let i=0;i<Math.ceil((off+dim2)/7)*7;i++){const d=i-off+1;if(d<1||d>dim2)h+='<div style="border:0"></div>';else{const key=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),v=by[key];if(v!=null){wk+=v;tot+=v;v>0?gd++:v<0&&rd++}h+=`<div class="${v>0?'w':v<0?'l':''}">${d}<b class="${cl(v)}">${v==null?'':m$(v).replace(/\.00$/,'')}</b></div>`}
+if(i%7==6){h+=`<div style="background:#fff"><b class="${cl(wk)}">${wk?m$(wk).replace(/\.00$/,''):''}</b></div>`;wk=0}}
+return fb().split('<select onchange="S.f.per')[0]+'</div>'+`<div class="row"><button class=ghost onclick="cm.setMonth(cm.getMonth()-1);render()">←</button><b>${cm.toLocaleDateString('es',{month:'long',year:'numeric'})}</b><button class=ghost onclick="cm.setMonth(cm.getMonth()+1);render()">→</button></div><div class="cal">${h}</div><div class="kg" style="margin-top:12px">${k('P&L del mes',m$(tot),cl(tot))}${k('Días verdes',gd,'g')}${k('Días rojos',rd,'r')}</div>`};
+const DIMS={pb:['Playbook',t=>t.pb],dow:['Día de la semana',t=>['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][new Date(t.date+'T00:00').getDay()]],hr:['Hora de entrada',t=>(t.time||'--').slice(0,2)+':00'],ses:['Sesión',t=>t.ses],sym:['Activo',t=>t.sym],bias:['Sesgo diario',t=>t.bias],q:['Calidad',t=>t.q],emo:['Emoción',t=>t.emo],err:['Error',t=>t.err],rules:['¿Seguí reglas?',t=>t.rules]};
+V['Estadísticas']=()=>{const g={};T().forEach(t=>{const key=DIMS[dim][1](t)||'(sin dato)';(g[key]=g[key]||[]).push(t)});const rows=Object.entries(g).map(([key,v])=>[key,stats(v)]).sort((x,y)=>y[1].net-x[1].net);
+return fb()+`<div class="bar"><select onchange="dim=this.value;render()">${Object.entries(DIMS).map(([key,v])=>`<option value="${key}"${key==dim?' selected':''}>Por ${v[0]}</option>`).join('')}</select></div><div class="card"><table><tr><th>${DIMS[dim][0]}</th><th>Trades</th><th>Win %</th><th>P&L</th><th>R prom.</th><th>PF</th></tr>${rows.map(([key,s])=>`<tr><td>${esc(key)}</td><td>${s.n}</td><td>${pc(s.wr)}</td><td class="${cl(s.net)}">${m$(s.net)}</td><td>${s.r==null?'—':s.r.toFixed(2)}</td><td>${pfm(s.pf)}</td></tr>`).join('')}</table></div>`};
+function ep(i,key,v){if(key=='name'){const o=S.playbooks[i].name;S.trades.forEach(t=>{if(t.pb==o)t.pb=v})}S.playbooks[i][key]=v;save();render()}
+V.Playbooks=()=>{const a=TA();return S.playbooks.map((p,i)=>{const s=stats(a.filter(t=>t.pb==p.name));return`<div class="card"><div class="g2"><label>Nombre<input value="${esc(p.name)}" onchange="ep(${i},'name',this.value)"></label><label>Ventana<input value="${esc(p.win)}" onchange="ep(${i},'win',this.value)"></label></div><label style="margin-top:8px">Descripción<input value="${esc(p.desc)}" onchange="ep(${i},'desc',this.value)"></label><label style="margin-top:8px">Checklist (una regla por línea)<textarea rows=4 onchange="ep(${i},'chk',this.value)">${esc(p.chk)}</textarea></label><div class="row"><small>${s.n} trades · WR ${pc(s.wr)} · P&L ${m$(s.net)} · ${s.r==null?'—':s.r.toFixed(2)+'R'}</small><button class=ghost onclick="S.playbooks.splice(${i},1);save();render()">Eliminar</button></div></div>`}).join('')+`<button onclick="S.playbooks.push({name:'Nuevo playbook',win:'',desc:'',chk:''});save();render()">+ Añadir playbook</button>`};
+function ex(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='journal-backup-'+iso(new Date())+'.json';a.click()}
+function im(f){const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);save();render()}catch(e){alert('Archivo inválido')}};r.readAsText(f)}
+V.Ajustes=()=>`<div class="card"><h3>Comisión por contrato (round trip, $)</h3><input type=number step=.01 value="${S.comm}" onchange="S.comm=+this.value||0;save();render()"><p><small>Se usa cuando dejas la comisión vacía al registrar un trade.</small></p></div>
+<div class="card"><h3>Copia de seguridad</h3><p><small>Tus datos se guardan solo en este navegador y dispositivo. Exporta una copia con frecuencia y úsala para pasar tus datos a otro dispositivo.</small></p><div class="bar"><button onclick=ex()>Exportar JSON</button><label class="ghost" style="padding:10px 14px;border:1px solid var(--l);border-radius:8px;cursor:pointer">Importar JSON<input type=file accept=.json style="display:none" onchange="im(this.files[0])"></label></div><button class=ghost onclick="if(confirm('¿Borrar TODOS los datos?')){localStorage.removeItem('jr1');location.reload()}">Borrar todo</button></div>`;
+render();
+</script></body></html>
