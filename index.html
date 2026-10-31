@@ -2,31 +2,32 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Journal de Trading</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--l:#E5E7EB;--t:#111827;--m:#6B7280;--a:#0F766E;--g:#15803D;--r:#B91C1C;--c:#F9FAFB;color-scheme:light}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;color:var(--t);background:#fff}
-nav{display:flex;gap:4px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--l);position:sticky;top:0;background:#fff;z-index:5}
+:root{--l:#2A2A2E;--t:#F4EFE3;--m:#9A9486;--a:#D4AF37;--g:#34D399;--r:#F87171;--c:#141417;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;color:var(--t);background:#0B0B0C}
+nav{display:flex;gap:4px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--l);position:sticky;top:0;background:#0B0B0C;z-index:5}
 nav button{border:0;background:none;padding:8px 12px;border-radius:8px;color:var(--m);font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer}
-nav button.on{background:var(--a);color:#fff}
+nav button.on{background:var(--a);color:#0B0B0C}
 main{max-width:980px;margin:0 auto;padding:14px}
 .card{background:var(--c);border:1px solid var(--l);border-radius:12px;padding:14px;margin-bottom:12px}
 .kg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
 @media(min-width:700px){.kg{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:repeat(4,1fr)!important}}
 .k{background:var(--c);border:1px solid var(--l);border-radius:12px;padding:12px}.k small{display:block;color:var(--m);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.k b{font-size:20px}
-.g{color:var(--g)}.r{color:var(--r)}.y{color:#B45309}
+.g{color:var(--g)}.r{color:var(--r)}.y{color:var(--a)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 label{font-size:12px;color:var(--m);display:block}
-input,select,textarea{width:100%;margin-top:4px;padding:9px;border:1px solid var(--l);border-radius:8px;font:inherit;font-size:14px;background:#fff;color:var(--t)}
-button{padding:10px 14px;border:0;border-radius:8px;background:var(--a);color:#fff;font-weight:700;cursor:pointer;font-size:14px}
-button.ghost{background:#fff;color:var(--m);border:1px solid var(--l)}
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.seg button{background:#fff;color:var(--m);border:1px solid var(--l);padding:12px}
-.seg button.on.g{background:#DCFCE7;color:var(--g);border-color:var(--g)}.seg button.on.r{background:#FEE2E2;color:var(--r);border-color:var(--r)}
+input,select,textarea{width:100%;margin-top:4px;padding:9px;border:1px solid var(--l);border-radius:8px;font:inherit;font-size:14px;background:#0F0F12;color:var(--t)}
+input:focus,select:focus,textarea:focus{outline:1px solid var(--a);border-color:var(--a)}
+button{padding:10px 14px;border:0;border-radius:8px;background:var(--a);color:#0B0B0C;font-weight:700;cursor:pointer;font-size:14px}
+button.ghost{background:transparent;color:var(--m);border:1px solid var(--l)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.seg button{background:transparent;color:var(--m);border:1px solid var(--l);padding:12px}
+.seg button.on.g{background:rgba(52,211,153,.12);color:var(--g);border-color:var(--g)}.seg button.on.r{background:rgba(248,113,113,.12);color:var(--r);border-color:var(--r)}
 .bar{display:flex;gap:8px;margin-bottom:12px}.row{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin:6px 0}
-.tag{padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700;background:var(--l)}.tag.g{background:#DCFCE7}.tag.r{background:#FEE2E2}.tag.y{background:#FEF3C7}
+.tag{padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700;background:var(--l)}.tag.g{background:rgba(52,211,153,.15)}.tag.r{background:rgba(248,113,113,.15)}.tag.y{background:rgba(212,175,55,.18)}
 .bar2{height:6px;background:var(--l);border-radius:9px;margin:8px 0;overflow:hidden}.bar2 i{display:block;height:100%;background:var(--a)}
 table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--m);font-weight:600}td,th{padding:7px 6px;border-bottom:1px solid var(--l)}
-.cal{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}.cal div{min-height:54px;border:1px solid var(--l);border-radius:8px;padding:4px;font-size:11px;color:var(--m)}
-.cal div b{display:block;font-size:12px;margin-top:4px}.cal .w{background:#DCFCE7}.cal .l{background:#FEE2E2}.cal .h{border:0;min-height:0;text-align:center;font-weight:700}
-h3{margin:4px 0 12px}
+.cal{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}.cal div{min-height:54px;background:#111114;border:1px solid var(--l);border-radius:8px;padding:4px;font-size:11px;color:var(--m)}
+.cal div b{display:block;font-size:12px;margin-top:4px}.cal .w{background:rgba(52,211,153,.14)}.cal .l{background:rgba(248,113,113,.14)}.cal .h{border:0;background:none;min-height:0;text-align:center;font-weight:700}
+h3{margin:4px 0 12px;color:var(--a)}small{color:var(--m)}
 </style></head><body><nav id="nav"></nav><main id="app"></main>
 <script>
 const PV={NQ:20,MNQ:2,ES:50,MES:5,YM:5,MYM:.5,RTY:50,M2K:5,GC:100,MGC:10,CL:1000,MCL:100};
@@ -71,24 +72,34 @@ const fb=()=>`<div class="bar"><select onchange="S.f.acc=this.value;save();rende
 const k=(l,v,c)=>`<div class="k"><small>${l}</small><b class="${c||''}">${v}</b></div>`;
 const tabs=['Dashboard','Trades','Cuentas','Calendario','Estadísticas','Playbooks','Ajustes'];let tab='Dashboard',cm=new Date(),ch=[],D='Long',dim='pb',V={},A={};
 function render(){$('#nav').innerHTML=tabs.map(t=>`<button class="${t==tab?'on':''}" onclick="tab='${t}';render()">${t}</button>`).join('');ch.forEach(c=>c.destroy());ch=[];$('#app').innerHTML=V[tab]();if(A[tab])A[tab]()}
-V.Dashboard=()=>{const s=stats(T());return fb()+`<div class="kg">${k('P&L neto',m$(s.net),cl(s.net))}${k('Win rate',pc(s.wr))}${k('Profit factor',pfm(s.pf))}${k('Expectativa',m$(s.exp),cl(s.exp))}${k('Trades',s.n)}${k('R promedio',s.r==null?'—':s.r.toFixed(2)+'R')}${k('Ganancia media',m$(s.aw),'g')}${k('Pérdida media',m$(s.al),'r')}${k('Mejor trade',m$(s.best),cl(s.best))}${k('Peor trade',m$(s.worst),cl(s.worst))}${k('Max drawdown',m$(s.dd),cl(s.dd))}${k('Reglas cumplidas',pc(s.rules))}</div><div class="card"><canvas id="c1" height="130"></canvas></div><div class="card"><canvas id="c2" height="130"></canvas></div><h3>Cuentas</h3>${accCards()}`};
-A.Dashboard=()=>{if(!window.Chart)return;const a=T();let c=0;const eq=a.map(t=>c+=t.net),o=x=>({plugins:{legend:{display:false},title:{display:true,text:x}}});
-ch.push(new Chart($('#c1'),{type:'line',data:{labels:a.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#0F766E',backgroundColor:'rgba(15,118,110,.08)',fill:true,tension:.2,pointRadius:0}]},options:o('Curva de equity')}));
+V.Dashboard=()=>{const s=stats(T());return fb()+`<div class="kg">${k('P&L neto',m$(s.net),cl(s.net))}${k('Win rate',pc(s.wr))}${k('Profit factor',pfm(s.pf))}${k('Expectativa',m$(s.exp),cl(s.exp))}${k('Trades',s.n)}${k('R promedio',s.r==null?'—':s.r.toFixed(2)+'R')}${k('Ganancia media',m$(s.aw),'g')}${k('Pérdida media',m$(s.al),'r')}${k('Mejor trade',m$(s.best),cl(s.best))}${k('Peor trade',m$(s.worst),cl(s.worst))}${k('Max drawdown',m$(s.dd),cl(s.dd))}${k('Reglas cumplidas',pc(s.rules))}</div>${scCard()}<div class="card"><canvas id="c1" height="130"></canvas></div><div class="card"><canvas id="c2" height="130"></canvas></div><h3>Cuentas</h3>${accCards()}`};
+A.Dashboard=()=>{if(!window.Chart)return;Chart.defaults.color='#9A9486';Chart.defaults.borderColor='#2A2A2E';const a=T();radar();let c=0;const eq=a.map(t=>c+=t.net),o=x=>({plugins:{legend:{display:false},title:{display:true,text:x}}});
+ch.push(new Chart($('#c1'),{type:'line',data:{labels:a.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#D4AF37',backgroundColor:'rgba(212,175,55,.10)',fill:true,tension:.2,pointRadius:0}]},options:o('Curva de equity')}));
 const wd=['Lun','Mar','Mié','Jue','Vie'],v=wd.map(()=>0);a.forEach(t=>{const d=(new Date(t.date+'T00:00').getDay()+6)%7;if(d<5)v[d]+=t.net});
-ch.push(new Chart($('#c2'),{type:'bar',data:{labels:wd,datasets:[{data:v,backgroundColor:v.map(x=>x>=0?'#15803D':'#B91C1C')}]},options:o('P&L por día de la semana')}))};
+ch.push(new Chart($('#c2'),{type:'bar',data:{labels:wd,datasets:[{data:v,backgroundColor:v.map(x=>x>=0?'#34D399':'#F87171')}]},options:o('P&L por día de la semana')}))};
 const ff=(id,l,h)=>`<label>${l}${h}</label>`;
-V.Trades=()=>`<div class="card"><h3>Importar CSV (Tradovate)</h3><p><small>Sube el Orders.csv que descargas en Tradovate ▸ Account Reports ▸ Orders. Solo se leen las órdenes ejecutadas (Filled), se agrupan en trades y se omiten los duplicados. Las comisiones usan el valor de Ajustes.</small></p><div class="g2"><label>Cuenta destino<select id=imp-acc>${opts(S.accounts.map(a=>a.name))}</select></label><label>Archivo CSV<input type=file id=imp-f accept=".csv,.txt"></label></div><br><button onclick=imp()>Importar</button></div><div class="card"><h3>Nuevo trade</h3><div class="g2"><label>Fecha<input type=date id=f-date value="${iso(new Date())}"></label><label>Hora<input type=time id=f-time value="${new Date().toTimeString().slice(0,5)}"></label><label>Cuenta<select id=f-acc>${opts(S.accounts.map(a=>a.name))}</select></label><label>Activo<select id=f-sym onchange=pv()>${opts(Object.keys(PV))}</select></label></div>
+let ED=null,CK=[];
+const FM=[['date','Fecha','date'],['time','Hora','time'],['acc','Cuenta','sel',()=>S.accounts.map(a=>a.name)],['sym','Activo','sel',()=>Object.keys(PV)],['cts','Contratos','number'],['comm','Comisión $ (vacío = auto)','number'],['entry','Entrada','number'],['exit','Salida','number'],['sl','Stop loss','number'],['tp','Take profit','number'],['pb','Playbook','sel+',()=>S.playbooks.map(p=>p.name)],['ses','Sesión','sel+',()=>L.ses],['bias','Sesgo','sel+',()=>L.bias],['q','Calidad','sel+',()=>L.q],['emo','Emoción','sel+',()=>L.emo],['err','Error','sel+',()=>L.err],['rules','¿Seguí reglas?','sel+',()=>['Sí','No']],['link','Captura (URL)','text']];
+const fmH=t=>FM.map(([id,l,ty,o])=>{const v=t[id]==null?'':t[id];const inp=ty[0]=='s'?`<select id=f-${id}${id=='pb'?' onchange=ck()':id=='sym'?' onchange=pv()':''}>${opts(ty=='sel+'?['',...o()]:o(),v)}</select>`:`<input type=${ty} id=f-${id}${ty=='number'?' step=any oninput=pv()':''} value="${esc(v)}">`;return`<label>${l}${inp}</label>`}).join('');
+V.Trades=()=>{const t=ED||{date:iso(new Date()),time:new Date().toTimeString().slice(0,5),cts:1};return`<div class="card"><h3>Importar CSV (Tradovate)</h3><p><small>Sube el Orders.csv que descargas en Tradovate ▸ Account Reports ▸ Orders. Solo se leen las órdenes ejecutadas (Filled), se agrupan en trades y se omiten los duplicados. Las comisiones usan el valor de Ajustes.</small></p><div class="g2"><label>Cuenta destino<select id=imp-acc>${opts(S.accounts.map(a=>a.name))}</select></label><label>Archivo CSV<input type=file id=imp-f accept=".csv,.txt"></label></div><br><button onclick=imp()>Importar</button></div>
+<div class="card"><h3>${ED?'Editar trade':'Nuevo trade'}</h3><div class="g2">${fmH(t)}</div>
 <div class="seg"><button id=bL class="${D=='Long'?'on g':''}" onclick="setD('Long')">Long</button><button id=bS class="${D=='Short'?'on r':''}" onclick="setD('Short')">Short</button></div>
-<div class="g2"><label>Contratos<input type=number id=f-cts value=1 oninput=pv()></label><label>Comisión $ (vacío = auto)<input type=number id=f-comm step=.01 oninput=pv()></label><label>Entrada<input type=number id=f-en step=.25 oninput=pv()></label><label>Salida<input type=number id=f-ex step=.25 oninput=pv()></label><label>Stop loss<input type=number id=f-sl step=.25 oninput=pv()></label><label>Take profit<input type=number id=f-tp step=.25></label></div>
-<div class="row"><span>P&L neto estimado: <b id=pn>—</b></span><span>R: <b id=pr>—</b></span></div>
-<div class="g2"><label>Playbook<select id=f-pb>${opts(['',...S.playbooks.map(p=>p.name)])}</select></label><label>Sesión<select id=f-ses>${opts(['',...L.ses])}</select></label><label>Sesgo<select id=f-bias>${opts(['',...L.bias])}</select></label><label>Calidad<select id=f-q>${opts(['',...L.q])}</select></label><label>Emoción<select id=f-emo>${opts(['',...L.emo])}</select></label><label>Error<select id=f-err>${opts(['',...L.err])}</select></label><label>¿Seguí reglas?<select id=f-rules>${opts(['','Sí','No'])}</select></label><label>Captura (URL)<input id=f-link></label></div>
-<label style="margin-top:10px">Notas<textarea id=f-notes rows=2></textarea></label><br><button onclick=add()>Guardar trade</button></div>
-<div class="card"><table><tr><th>Fecha</th><th>Cuenta</th><th>Activo</th><th>P&L</th><th>R</th><th></th></tr>${TA().slice().reverse().slice(0,60).map(t=>`<tr><td>${t.date}</td><td>${esc(t.acc)}</td><td>${t.sym} ${t.dir[0]}</td><td class="${cl(t.net)}">${m$(t.net)}</td><td>${t.r==null?'—':t.r.toFixed(2)}</td><td><button class=ghost onclick="del(${t.id})">✕</button></td></tr>`).join('')}</table></div>`;
+<div id=chk></div><div class="row"><span>P&L neto estimado: <b id=pn>—</b></span><span>R: <b id=pr>—</b></span></div>
+<label style="margin-top:10px">Notas<textarea id=f-notes rows=3>${esc(t.notes)}</textarea></label><br><button onclick=add()>${ED?'Guardar cambios':'Guardar trade'}</button>${ED?' <button class=ghost onclick="ED=null;render()">Cancelar</button>':''}</div>
+<div class="card"><table><tr><th>Fecha</th><th>Cuenta</th><th>Activo</th><th>P&L</th><th>R</th><th></th></tr>${TA().slice().reverse().slice(0,60).map(t=>`<tr><td>${t.date}</td><td>${esc(t.acc)}</td><td>${t.sym} ${t.dir[0]}</td><td class="${cl(t.net)}">${m$(t.net)}</td><td>${t.r==null?'—':t.r.toFixed(2)}</td><td><button class=ghost onclick="ED=S.trades.find(x=>x.id==${t.id});D=ED.dir;render();scrollTo(0,0)">✎</button> <button class=ghost onclick="del(${t.id})">✕</button></td></tr>`).join('')}</table></div>`};
+A.Trades=()=>{CK=(ED&&ED.chk)||[];ck(1);pv()};
+function ck(first){if(!first)CK=[...document.querySelectorAll('#chk input:checked')].map(x=>x.value);const p=S.playbooks.find(x=>x.name==$('#f-pb').value);$('#chk').innerHTML=p&&p.chk?'<small>Checklist del playbook</small>'+p.chk.split('\n').filter(Boolean).map(r=>`<label style="display:flex;gap:8px;align-items:center;margin:5px 0;font-size:13px;color:var(--t)"><input type=checkbox style="width:auto;margin:0" value="${esc(r)}" ${CK.includes(r)?'checked':''}> ${esc(r)}</label>`).join(''):''}
 function setD(d){D=d;$('#bL').className=d=='Long'?'on g':'';$('#bS').className=d=='Short'?'on r':'';pv()}
-function pv(){const g=i=>$('#f-'+i).value,c=+g('cts'),en=+g('en'),ex=+g('ex'),pvv=PV[g('sym')]||0;if(!c||g('en')===''||g('ex')===''){$('#pn').textContent='—';$('#pr').textContent='—';return}
-const net=(ex-en)*(D=='Long'?1:-1)*c*pvv-(g('comm')===''?c*S.comm:+g('comm')),risk=g('sl')?Math.abs(en-+g('sl'))*c*pvv:0;$('#pn').textContent=m$(net);$('#pn').className=cl(net);$('#pr').textContent=risk?(net/risk).toFixed(2)+'R':'—'}
-function add(){const g=i=>$('#f-'+i).value,n=i=>g(i)===''?null:+g(i);const t={id:Date.now(),date:g('date'),time:g('time'),acc:g('acc'),sym:g('sym'),dir:D,cts:n('cts'),entry:n('en'),exit:n('ex'),sl:n('sl'),tp:n('tp'),comm:n('comm'),pb:g('pb'),ses:g('ses'),bias:g('bias'),q:g('q'),emo:g('emo'),err:g('err'),rules:g('rules'),link:g('link'),notes:g('notes')};
-if(!t.date||!t.acc||!t.cts||t.entry==null||t.exit==null)return alert('Completa fecha, cuenta, contratos, entrada y salida');S.trades.push(t);save();render()}
+function pv(){const g=i=>$('#f-'+i).value,c=+g('cts'),en=+g('entry'),ex=+g('exit'),p=PV[g('sym')]||0;if(!c||g('entry')===''||g('exit')===''){$('#pn').textContent='—';$('#pr').textContent='—';return}
+const net=(ex-en)*(D=='Long'?1:-1)*c*p-(g('comm')===''?c*S.comm:+g('comm')),risk=g('sl')?Math.abs(en-+g('sl'))*c*p:0;$('#pn').textContent=m$(net);$('#pn').className=cl(net);$('#pr').textContent=risk?(net/risk).toFixed(2)+'R':'—'}
+function add(){const t={id:ED?ED.id:Date.now(),dir:D,notes:$('#f-notes').value,chk:[...document.querySelectorAll('#chk input:checked')].map(x=>x.value)};FM.forEach(([id,,ty])=>{const v=$('#f-'+id).value;t[id]=ty=='number'?(v===''?null:+v):v});
+if(!t.date||!t.acc||!t.cts||t.entry==null||t.exit==null)return alert('Completa fecha, cuenta, contratos, entrada y salida');
+if(ED){const i=S.trades.findIndex(x=>x.id==ED.id);S.trades[i]={...S.trades[i],...t};ED=null}else S.trades.push(t);save();render()}
+const LB=['Win rate','Profit factor','Ganancia/Pérdida','Consistencia','Disciplina','Drawdown'];
+function score(a){if(!a.length)return{total:0,v:[0,0,0,0,0,0]};const s=stats(a),dy={};a.forEach(t=>dy[t.date]=(dy[t.date]||0)+t.net);const dv=Object.values(dy),gd=dv.filter(x=>x>0).length/dv.length,cp=x=>Math.max(0,Math.min(100,x)),pf=typeof s.pf=='number'?s.pf:(s.pf=='∞'?3:0),wl=s.al?s.aw/Math.abs(s.al):(s.aw?3:0),gr=a.filter(t=>t.net>0).reduce((x,t)=>x+t.net,0);
+const v=[cp((s.wr||0)/.6*100),cp(pf/2*100),cp(wl/2*100),cp(gd/.6*100),s.rules==null?50:s.rules*100,cp(100-(-s.dd)/Math.max(gr,1)*100)].map(Math.round);return{total:Math.round(v.reduce((x,y)=>x+y,0)/6),v}}
+const scCard=()=>{const q=score(T());return`<div class="card"><div class="row"><b>Puntuación del trader</b><b class="y" style="font-size:24px">${q.total}/100</b></div><canvas id="c3" height="150"></canvas><small>Puntuación propia inspirada en la de TradeZella (la suya es propietaria): win rate, profit factor, ratio ganancia/pérdida, días verdes, reglas cumplidas y control del drawdown.</small></div>`};
+function radar(){if(!$('#c3'))return;const q=score(T());ch.push(new Chart($('#c3'),{type:'radar',data:{labels:LB,datasets:[{data:q.v,borderColor:'#D4AF37',backgroundColor:'rgba(212,175,55,.2)',pointBackgroundColor:'#D4AF37'}]},options:{scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:'#2A2A2E'},angleLines:{color:'#2A2A2E'},pointLabels:{color:'#9A9486'}}},plugins:{legend:{display:false}}}}))}
 function del(id){if(confirm('¿Eliminar este trade?')){S.trades=S.trades.filter(t=>t.id!=id);save();render()}}
 const fld=(i,key,l,num)=>`<label>${l}<input value="${esc(S.accounts[i][key])}" ${num?'type=number':''} onchange="ea(${i},'${key}',this.value,${!!num})"></label>`,fsel=(i,key,l,a)=>`<label>${l}<select onchange="ea(${i},'${key}',this.value)">${opts(a,S.accounts[i][key])}</select></label>`;
 function ea(i,key,v,num){if(key=='name'){const o=S.accounts[i].name;S.trades.forEach(t=>{if(t.acc==o)t.acc=v})}S.accounts[i][key]=num?(+v||0):v;save();render()}
@@ -96,7 +107,7 @@ V.Cuentas=()=>accCards()+'<h3>Editar cuentas</h3>'+S.accounts.map((a,i)=>`<div c
 V.Calendario=()=>{const y=cm.getFullYear(),mo=cm.getMonth(),off=(new Date(y,mo,1).getDay()+6)%7,dim2=new Date(y,mo+1,0).getDate(),by={};TA().forEach(t=>by[t.date]=(by[t.date]||0)+t.net);
 let h=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom','Semana'].map(x=>`<div class=h>${x}</div>`).join(''),wk=0,tot=0,gd=0,rd=0;
 for(let i=0;i<Math.ceil((off+dim2)/7)*7;i++){const d=i-off+1;if(d<1||d>dim2)h+='<div style="border:0"></div>';else{const key=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),v=by[key];if(v!=null){wk+=v;tot+=v;v>0?gd++:v<0&&rd++}h+=`<div class="${v>0?'w':v<0?'l':''}">${d}<b class="${cl(v)}">${v==null?'':m$(v).replace(/\.00$/,'')}</b></div>`}
-if(i%7==6){h+=`<div style="background:#fff"><b class="${cl(wk)}">${wk?m$(wk).replace(/\.00$/,''):''}</b></div>`;wk=0}}
+if(i%7==6){h+=`<div style="background:#1A1A1E"><b class="${cl(wk)}">${wk?m$(wk).replace(/\.00$/,''):''}</b></div>`;wk=0}}
 return fb().split('<select onchange="S.f.per')[0]+'</div>'+`<div class="row"><button class=ghost onclick="cm.setMonth(cm.getMonth()-1);render()">←</button><b>${cm.toLocaleDateString('es',{month:'long',year:'numeric'})}</b><button class=ghost onclick="cm.setMonth(cm.getMonth()+1);render()">→</button></div><div class="cal">${h}</div><div class="kg" style="margin-top:12px">${k('P&L del mes',m$(tot),cl(tot))}${k('Días verdes',gd,'g')}${k('Días rojos',rd,'r')}</div>`};
 const DIMS={pb:['Playbook',t=>t.pb],dow:['Día de la semana',t=>['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][new Date(t.date+'T00:00').getDay()]],hr:['Hora de entrada',t=>(t.time||'--').slice(0,2)+':00'],ses:['Sesión',t=>t.ses],sym:['Activo',t=>t.sym],bias:['Sesgo diario',t=>t.bias],q:['Calidad',t=>t.q],emo:['Emoción',t=>t.emo],err:['Error',t=>t.err],rules:['¿Seguí reglas?',t=>t.rules]};
 V['Estadísticas']=()=>{const g={};T().forEach(t=>{const key=DIMS[dim][1](t)||'(sin dato)';(g[key]=g[key]||[]).push(t)});const rows=Object.entries(g).map(([key,v])=>[key,stats(v)]).sort((x,y)=>y[1].net-x[1].net);
